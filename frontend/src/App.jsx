@@ -1,9 +1,35 @@
 import React from 'react'
+import { Routes,Route } from 'react-router-dom'
+import Home from './pages/Home'
+import Collection from './pages/Collection'
+import About from './pages/About'
+import Contact from './pages/Contact'
+import Product from './pages/Product'
+import Cart from './pages/Cart'
+import Login from './pages/Login'
+import PlaceOrder from './pages/Placeorder'
+import Orders from './pages/Orders'
 
 const App = () => {
   return (
-    <div>
-      
+    <div className='px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]'>
+      <Routes>
+        <Route path='/' element={<Home/>} />
+        <Route path='/Collection' element={<Collection/>} />
+        <Route path='/About' element={<About/>} />
+        <Route path='/Contact' element={<Contact/>} />
+        <Route path='/Product/:Productid' element={<Product/>} />
+        <Route path='/cart' element={<Cart/>} />
+        <Route path='/login' element={<Login/>} />
+        <Route path='/PlaceOrder' element={<Placeorder/>} />
+        <Route path='/Orders' element={<Orders/>} />
+
+        
+
+
+
+
+      </Routes>
     </div>
   )
 }
