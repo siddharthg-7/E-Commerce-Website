@@ -1,30 +1,32 @@
 import { assets } from '../assets/assets'
-import { NavLink } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 
 const Navbar = () => {
   return (
     <div className='flex items-center justify-between py-5 font-medium'>  
+    <Link to="/">
       <img src={assets.logo} className="w-16" alt="Logo" />
+      </Link>
 
       <ul className='hidden sm:flex gap-5 text-sm text-gray-700'>
         <NavLink to="/" className='flex flex-col items-center gap-1'>
           <p>Home</p>
-          <hr className='w-24 border-none h-[1.5px] bg-gray-700 hidden'/>
+          <hr className='w-6 border-none h-[1.5px] bg-gray-700 hidden'/>
         </NavLink>
 
         <NavLink to="/Collection" className='flex flex-col items-center gap-1'>
           <p>Collection</p>
-          <hr className='w-24 border-none h-[1.5px] bg-gray-700 hidden'/>
+          <hr className='w-6 border-none h-[1.5px] bg-gray-700 hidden'/>
         </NavLink>
 
         <NavLink to="/About" className='flex flex-col items-center gap-1'>
           <p>About</p>
-          <hr className='w-24 border-none h-[1.5px] bg-gray-700 hidden'/>
+          <hr className='w-6 border-none h-[1.5px] bg-gray-700 hidden'/>
         </NavLink>
 
         <NavLink to="/Contact" className='flex flex-col items-center gap-1'>
           <p>Contact</p>
-          <hr className='w-24 border-none h-[1.5px] bg-gray-700 hidden'/>
+          <hr className='w-6 border-none h-[1.5px] bg-gray-700 hidden'/>
         </NavLink>
       </ul>
 
@@ -44,7 +46,10 @@ const Navbar = () => {
           </div>
 
         </div>
-        
+        <Link to="/Cart" className='relative'>
+          <img src={assets.cart_icon} className='w-5 cursor-pointer' alt="Cart" />
+          <p className='absolute right-[-5px] bottom-[-5px] w-4 text-center  leading-4 bg-black text-white aspect-square rounded-full text-[8px]'>0</p>
+        </Link>
 
       </div>
     </div>
