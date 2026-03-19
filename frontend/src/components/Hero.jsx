@@ -20,12 +20,14 @@ const Hero = () => {
 
           <div className='flex items-center gap-2'>
            <p className='font-semibold text-sm md:text-base'>Shop Now</p>
-           <p></p>
+           <p className='w-8 md:w-11 h-[1px] bg-[#414141]'></p>
           </div>
 
         </div>
         
       </div>
+      {/* Hero Right SIde*/}
+      <img  className='w-full sm:w-1/2' src ={assets.hero_img} />
     </div>
   )
 }
