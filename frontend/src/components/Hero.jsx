@@ -14,7 +14,7 @@ const Hero = () => {
             <p className='font-medium text-sm md:text-base'>Our BestSellers</p>
           </div>
 
-          <h1 className='text-3xl sm:py-3 lg:text-5xl leading-relaxed'>
+          <h1 className=' prata-regular text-3xl sm:py-3 lg:text-5xl leading-relaxed'>
             Latest Arrivals
           </h1>
 
