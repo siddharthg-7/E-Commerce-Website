@@ -4,11 +4,18 @@ const ShopContext = createContext();
 const ShopContextProvider = ({ children }) => {
     const currency = '$';
     const delivery_fee = 10;
+    const [search,setSearch] = React.useState('');
+    const [showsearch,setShowSearch] = React.useState(true);
 
     const value = {
         products,
         currency,
-        delivery_fee
+        delivery_fee,
+        search,
+        setShowSearch,
+        setSearch,
+        showsearch,
+
     };
 
     return (
