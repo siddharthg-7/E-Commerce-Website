@@ -11,6 +11,7 @@ import Login from './pages/Login'
 import PlaceOrder from './pages/Placeorder'
 import Orders from './pages/Orders'
 import Navbar from './components/Navbar'
+import SearchBar from './components/SearchBar'
 import Footer from './components/Footer'
 
 const App = () => {
@@ -18,7 +19,7 @@ const App = () => {
     <div className='px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]'>
 
       <Navbar />
-
+      <SearchBar />
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/Collection' element={<Collection />} />

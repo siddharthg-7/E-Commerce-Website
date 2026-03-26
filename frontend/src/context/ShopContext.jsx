@@ -1,11 +1,11 @@
-import { createContext } from "react";
+import { createContext, useState } from "react";
 import {products} from '../assets/assets'
 const ShopContext = createContext();
 const ShopContextProvider = ({ children }) => {
     const currency = '$';
     const delivery_fee = 10;
-    const [search,setSearch] = React.useState('');
-    const [showsearch,setShowSearch] = React.useState(true);
+    const [search,setSearch] = useState('');
+    const [showsearch,setShowSearch] = useState(false);
 
     const value = {
         products,
