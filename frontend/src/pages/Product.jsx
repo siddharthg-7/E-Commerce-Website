@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { assets } from '../assets/assets';
 import { ShopContext } from '../context/ShopContext';
@@ -7,28 +7,25 @@ import RelatedProducts from '../components/RelatedProducts';
 const Product = () => {
   const { productId } = useParams();
   const { products, currency, addToCart } = useContext(ShopContext);
-  const [productData, setProductData] = useState(null);
-  const [image, setImage] = useState('');
+  const [selectedImage, setSelectedImage] = useState('');
   const[size, setSize] = useState('');
 
+  const productData = useMemo(
+    () => products.find((item) => item._id === productId) || null,
+    [products, productId]
+  );
 
-  const fetchProductData = () => {
-    const product = products.find((item) => item._id === productId);
-
-    if (product) {
-      setProductData(product);
-      setImage(product.image[0]);
-      return;
+  const image = useMemo(() => {
+    if (!productData) {
+      return '';
     }
 
-    setProductData(null);
-    setImage('');
-  };
-  console.log(productData);
+    if (selectedImage && productData.image.includes(selectedImage)) {
+      return selectedImage;
+    }
 
-  useEffect(() => {
-    fetchProductData();
-  }, [productId, products]);
+    return productData.image[0];
+  }, [productData, selectedImage]);
 
   return productData ? (
     <div className='border-t-2 pt-10 transition-opacity ease-in duration-500 opacity-100'>
@@ -38,7 +35,7 @@ const Product = () => {
             {
               productData.image.map((item, index) => (
                 <img
-                  onClick={() => setImage(item)}
+                  onClick={() => setSelectedImage(item)}
                   key={index}
                   src={item}
                   alt={productData.name}

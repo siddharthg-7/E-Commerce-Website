@@ -1,21 +1,20 @@
-import React, { useEffect } from 'react'
-import { useContext } from 'react';
+import React, { useContext, useMemo } from 'react'
 import { ShopContext } from '../context/ShopContext';   
 import ProductItem from './ProductItem';
 import Tittle from './Tittle';
 
 const RelatedProducts = ({category,subCategory}) => {
     const {products} = useContext(ShopContext);
-    const [related,setRelated] = React.useState([]);
-    useEffect(() => {
-        if(products.length > 0){
-            let productscopy = products.slice();
-            productscopy = productscopy.filter((item) => item.category === category );
-            productscopy = productscopy.filter((item) =>  item.subCategory === subCategory);
-            setRelated(productscopy.slice(0,5));
+        const related = useMemo(() => {
+            if (products.length === 0) {
+                return [];
+            }
 
-        }
-    }, [products, category, subCategory])
+            return products
+                .filter((item) => item.category === category)
+                .filter((item) => item.subCategory === subCategory)
+                .slice(0, 5);
+        }, [products, category, subCategory]);
 
   return (
     <div className='my-24'>
