@@ -110,8 +110,10 @@ const Collection = () => {
           <p className="mb-3 text-sm font-medium">CATEGORIES</p>
           <div className="flex flex-col gap-2 text-sm">
             {['Men', 'Women', 'Kids'].map((cat) => (
-              <label key={cat} className="flex gap-2">
+              <label key={cat} htmlFor={`category-${cat.toLowerCase()}`} className="flex gap-2">
                 <input
+                  id={`category-${cat.toLowerCase()}`}
+                  name="category"
                   type="checkbox"
                   value={cat}
                   onChange={toggleCategory}
@@ -135,8 +137,10 @@ const Collection = () => {
               { label: 'Bottom Wear', value: 'BottomWear' },
               { label: 'Winter Wear', value: 'WinterWear' },
             ].map((type) => (
-              <label key={type.value} className="flex gap-2">
+              <label key={type.value} htmlFor={`sub-category-${type.value.toLowerCase()}`} className="flex gap-2">
                 <input
+                  id={`sub-category-${type.value.toLowerCase()}`}
+                  name="subCategory"
                   type="checkbox"
                   value={type.value}
                   onChange={toggleSubCategory}
@@ -154,6 +158,8 @@ const Collection = () => {
           <Tittle text1="ALL" text2="COLLECTIONS" />
 
           <select
+            id="sort-products"
+            name="sortProducts"
             onChange={(e) => setSortType(e.target.value)}
             className="border px-2"
           >
