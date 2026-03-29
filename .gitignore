@@ -1,0 +1,9 @@
+# Dependencies
+**/node_modules/
+
+# Python virtual environments
+/venv/
+
+# Environment variables
+.env
+**/.env
