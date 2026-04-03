@@ -3,11 +3,30 @@ import userModel from "../models/userModel.js";
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
-const createToken = (user) => {
-    return jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+const createToken = (id) => {
+    return jwt.sign({ id }, process.env.JWT_SECRET);
 }
 const loginUser = async (req, res) => {
-    res.status(501).json({ success: false, message: 'Login not implemented yet' });
+    try {
+        const { email, password } = req.body;
+        const user = await userModel.findOne({ email });
+        if (!user) {
+            return res.status(400).json({ success: false, message: 'User not found' });
+        } 
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ success: false, message: 'Invalid credentials' });
+        }
+        const token = createToken(user._id);
+        res.status(200).json({
+            success: true,
+            message: 'Login successful',
+            token
+        }); 
+    }catch (error) {
+        console.error('Error logging in user:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
 }
 
 const registerUser = async (req, res) => {
@@ -35,7 +54,11 @@ const registerUser = async (req, res) => {
         });
         const user = await newUser.save();
         const token = createToken(user._id);
-        res.json({ success: true, token });
+        res.status(201).json({
+            success: true,
+            message: 'User registered successfully',
+            token
+        });
     }catch(error){
         console.error('Error registering user:', error);
         res.status(500).json({  success: false, message: 'Server error' });
