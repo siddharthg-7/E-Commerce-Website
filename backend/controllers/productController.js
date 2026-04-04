@@ -1,5 +1,6 @@
 import productModel from '../models/productModel.js';
-
+import v2 from 'cloudinary';
+import dotenv from 'dotenv';
 const addProduct = async (req, res) => {
     try {
         const body = req.body || {};
@@ -49,7 +50,14 @@ const addProduct = async (req, res) => {
         const product = new productModel(productData);
         await product.save();
 
-        return res.status(201).json({ success: true, message: 'Product added successfully', product });
+        let imageurl = await Promise.all(imageList.map(async (item) => {
+           let result = await.cloudinary.v2.uploader.upload(item.path, {
+                folder: 'products',
+            });
+            const url = result.secure_url || result.url || item.path    ;
+            return url;
+        }));
+        return res.status(201).json({ success: true, message: 'Product added successfully', product, imageurl });
     } catch (error) {
         console.error('Error adding product:', error);
         return res.status(500).json({ success: false, message: 'Internal server error' });
