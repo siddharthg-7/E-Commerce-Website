@@ -23,9 +23,16 @@ app.get('/', (req, res) => {
   res.send('API is running');
 });
 
-// start server ONLY after DB connects
+// start server ONLY after DB connects (unless SKIP_DB is set)
 const startServer = async () => {
   try {
+    if (process.env.SKIP_DB === 'true') {
+      app.listen(port, () => {
+        console.log(`Server is running on port ${port} (DB skipped)`);
+      });
+      return;
+    }
+
     await connectDB();
 
     app.listen(port, () => {
