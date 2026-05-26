@@ -7,18 +7,28 @@ const Login = () => {
 
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState(''); 
+    const [error, setError] = React.useState('');
 
     const onSubmithandler = async (e) => {   
         try{
 
             e.preventDefault();
-            const response = await axios.post(backendUrl+'/api/user/admin/login', { email, password });
-            console.log(response.data);
-            const { token } = response.data;
-            localStorage.setItem('token', token);
-            window.location.reload();
+            setError('');
+            const response = await axios.post(backendUrl+'/api/user/admin/login', {
+                email: email.trim(),
+                password,
+            });
+            if (response.data.success) {
+                console.log(response.data);
+                const { token } = response.data;
+                localStorage.setItem('token', token);
+                window.location.reload();
+            } else {
+                setError(response.data.message || 'Login failed. Check your credentials and try again.');
+            }
         } catch (error) {
             console.error('Login failed:', error);
+            setError(error?.response?.data?.message || 'Login failed. Check your credentials and try again.');
         }
     }
   return (
@@ -34,6 +44,7 @@ const Login = () => {
                     <p className='text-sm font-medium text-gray-300 mb-2'>Password</p>
                     <input  onChange={(e) => setPassword(e.target.value)} value={password} className='rounded-md w-full px-3 py-2 border border-gray-300 outline' type="password" placeholder="Enter Your Password" required/>
                 </div>
+                {error && <p className='text-sm text-red-500'>{error}</p>}
                 <button type="submit" className='mt-2 w-full py-2 py-4 rounded-md text-white bg-black '>
                     Login
                 </button>

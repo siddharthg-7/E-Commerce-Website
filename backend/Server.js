@@ -23,23 +23,22 @@ app.get('/', (req, res) => {
   res.send('API is running');
 });
 
-// start server ONLY after DB connects (unless SKIP_DB is set)
+// Start the API immediately so auth-only routes keep working even if the DB is down.
 const startServer = async () => {
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
+
+  if (process.env.SKIP_DB === 'true') {
+    console.log('MongoDB connection skipped');
+    return;
+  }
+
   try {
-    if (process.env.SKIP_DB === 'true') {
-      app.listen(port, () => {
-        console.log(`Server is running on port ${port} (DB skipped)`);
-      });
-      return;
-    }
-
     await connectDB();
-
-    app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
-    });
   } catch (error) {
-    console.error('Server failed to start:', error);
+    console.error('MongoDB connection failed:', error);
+    console.warn(`API is still running on port ${port}, but DB-backed routes will fail until MongoDB is reachable.`);
   }
 };
 
