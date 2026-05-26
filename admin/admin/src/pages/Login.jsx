@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import axios from 'axios'
 import { backendUrl } from '../App'
 
-const Login = () => {
+const Login = ({ setToken }) => {
 
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState(''); 
@@ -22,9 +22,13 @@ const Login = () => {
                 console.log(response.data);
                 const { token } = response.data;
                 localStorage.setItem('token', token);
+                setToken(token);
                 window.location.reload();
             } else {
-                setError(response.data.message || 'Login failed. Check your credentials and try again.');
+                tost.error(response.data.message || 'Login failed. Check your credentials and try again.', {
+                    position: "top-right",
+                    autoClose: 3000,
+                }); 
             }
         } catch (error) {
             console.error('Login failed:', error);
