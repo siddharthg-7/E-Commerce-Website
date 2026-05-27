@@ -25,10 +25,7 @@ const Login = ({ setToken }) => {
                 setToken(token);
                 window.location.reload();
             } else {
-                tost.error(response.data.message || 'Login failed. Check your credentials and try again.', {
-                    position: "top-right",
-                    autoClose: 3000,
-                }); 
+                setError(response.data.message || 'Login failed. Check your credentials and try again.');
             }
         } catch (error) {
             console.error('Login failed:', error);
