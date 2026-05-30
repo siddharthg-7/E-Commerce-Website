@@ -1,7 +1,7 @@
 import React from 'react'
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import Add from './pages/Add'
 import List from './pages/List'
 import Orders from './pages/Orders'
@@ -27,9 +27,11 @@ const App = () => {
         <Sidebar />
         <div className='w-[70%] mx-auto ml-[max(5vw,25px)] my-8 text-gray-600 text-base'>
           <Routes>
+            <Route path="/" element={<Navigate to="/add" replace />} />
             <Route path="/add" element={<Add setToken={setToken} />} />
             <Route path="/list" element={<List setToken={setToken} />} />
             <Route path="/orders" element={<Orders setToken={setToken} />} />
+            <Route path="*" element={<Navigate to="/add" replace />} />
           </Routes>
         </div>
       </div>

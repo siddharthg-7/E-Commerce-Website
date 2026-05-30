@@ -11,22 +11,22 @@ const add = () => {
         </p>
         <div> 
           <label htmlFor="image1" >
-            <img src={assets.upload_area} alt="Upload Icon"  />
+            <img src={assets.upload_area} alt="Upload Icon" className='w-20 ' />
             Choose File
             <input id="image1" type="file" className='hidden' />
           </label>
           <label htmlFor="image2" >
-            <img src={assets.upload_area} alt="Upload Icon"  />
+            <img src={assets.upload_area} alt="Upload Icon" className='w-20 ' />
             Choose File
             <input id="image2" type="file" className='hidden' />
           </label>
           <label htmlFor="image3" >
-            <img src={assets.upload_area} alt="Upload Icon"  />
+            <img src={assets.upload_area} alt="Upload Icon" className='w-20 ' />
             Choose File
             <input id="image3" type="file" className='hidden' />
           </label>
           <label htmlFor="image4" >
-            <img src={assets.upload_area} alt="Upload Icon"  />
+            <img src={assets.upload_area} alt="Upload Icon" className='w-20 ' />
             Choose File
             <input id="image4" type="file" className='hidden' />
           </label>
