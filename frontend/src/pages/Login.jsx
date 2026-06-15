@@ -1,58 +1,61 @@
-import React, { useState } from 'react'
+import React, { useState, useContext, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { ShopContext } from '../context/ShopContext';
+import axios from 'axios';
 
 const Login = () => {
   const [currentState, setCurrentState] = useState('Login');
-  const {tokens,setokens,navigate,backendURL} = useContext(ShopContext);  
+  const {tokens, settokens, navigate, backendURL} = useContext(ShopContext);  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (tokens) {
+      navigate('/');
+    }
+  }, [tokens, navigate]);
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
     setLoading(true);
     
     try {
-      const endpoint = currentState === 'Login' 
-        ? 'http://localhost:4000/api/user/login'
-        : 'http://localhost:4000/api/user/register';
-      
-      const payload = currentState === 'Login'
-        ? { email, password }
-        : { name, email, password };
-
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        localStorage.setItem('token', data.token);
-        toast.success(data.message || `${currentState} successful!`, {
-          position: "top-right",
-          autoClose: 3000,
-        });
-        console.log('Token received:', data.token);
-        // Reset form
-        setEmail('');
-        setPassword('');
-        setName('');
+      if (currentState === 'Signup') {
+        const response = await axios.post(backendURL + '/api/user/register', { name, email, password });
+        if (response.data.success) {
+          settokens(response.data.token);
+          localStorage.setItem('token', response.data.token);
+          toast.success(response.data.message || 'Signup successful!', {
+            position: "top-right",
+            autoClose: 3000,
+          });
+        } else {
+          toast.error(response.data.message || 'Something went wrong', {
+            position: "top-right",
+            autoClose: 3000,
+          });
+        }
       } else {
-        toast.error(data.message || 'Something went wrong', {
-          position: "top-right",
-          autoClose: 3000,
-        });
+        const response = await axios.post(backendURL + '/api/user/login', { email, password });
+        if (response.data.success) {
+          settokens(response.data.token);
+          localStorage.setItem('token', response.data.token);
+          toast.success(response.data.message || 'Login successful!', {
+            position: "top-right",
+            autoClose: 3000,
+          });
+        } else {
+          toast.error(response.data.message || 'Something went wrong', {
+            position: "top-right",
+            autoClose: 3000,
+          });
+        }
       }
     } catch (error) {
       console.error('Error:', error);
-      toast.error('Server error. Please try again', {
+      toast.error(error.response?.data?.message || 'Server error. Please try again', {
         position: "top-right",
         autoClose: 3000,
       });
