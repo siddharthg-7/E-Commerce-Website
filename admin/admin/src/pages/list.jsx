@@ -1,39 +1,84 @@
-import React from 'react'
+import react from 'react'
+import { useState, useEffect } from 'react'
+import { backendUrl, currency } from '../App'
+import axios from 'axios'
+import { toast } from 'react-toastify'
+const List = ({ token, setToken }) => {
+  const [list, setList] = useState([])
+  const fetchList = async () => {
+    try {
+      const response = await axios.get(backendUrl + "api/product/list", { headers: { token: token } })
+      if (response.data.success) {
+        setList(response.data.products || [])
+      }
+      else {
+        toast.error(response.data.message)
+      }
+    } catch (error) {
+      if (error.response?.status === 401) {
+        setToken('');
+        localStorage.removeItem('token');
+        toast.error("Session expired. Please log in again.");
+      } else {
+        toast.error(error.response?.data?.message || error.message);
+      }
+    }
+  }
 
-const products = [
-  { name: 'Premium Cotton Tee', category: 'Men', price: '$49', stock: 'In stock' },
-  { name: 'Relaxed Linen Shirt', category: 'Women', price: '$59', stock: 'Low stock' },
-  { name: 'Runner Sneakers', category: 'Unisex', price: '$89', stock: 'In stock' },
-]
-
-const List = () => {
+  const removeproduct = async (id) => {
+    try {
+      const response = await axios.post(backendUrl + "api/product/remove", { id }, { headers: { token: token } })
+      if (response.data.success) {
+        toast.success(response.data.message)
+        await fetchList()
+      }
+      else {
+        toast.error(response.data.message)
+      }
+    }
+    catch (error) {
+      if (error.response?.status === 401) {
+        setToken('');
+        localStorage.removeItem('token');
+        toast.error("Session expired. Please log in again.");
+      } else {
+        toast.error(error.response?.data?.message || error.message);
+      }
+    }
+  }
+  useEffect(() => {
+    fetchList()
+  }, [])
   return (
-    <section className='space-y-6'>
-      <div>
-        <p className='text-sm font-semibold uppercase tracking-[0.2em] text-slate-500'>Catalog</p>
-        <h1 className='mt-2 text-3xl font-semibold text-slate-900'>Product List</h1>
-        <p className='mt-2 max-w-2xl text-sm text-slate-600'>Review the current catalog and prepare items for updates or removal.</p>
-      </div>
-
-      <div className='overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm'>
-        <div className='grid grid-cols-[2fr_1fr_1fr_1fr] gap-4 border-b border-slate-200 bg-slate-50 px-6 py-4 text-sm font-semibold text-slate-600'>
-          <span>Product</span>
-          <span>Category</span>
-          <span>Price</span>
-          <span>Status</span>
+    <>
+      <p className='mb-2 font-semibold text-lg text-gray-600'>All Products List</p>
+      <div className='flex flex-col gap-2'>
+        {/* List Table Title*/}
+        <div className='hidden md:grid grid-cols-[1fr_3fr_1fr_1fr_1fr] items-center  py-1 px-2 border bg-gray-100  text-xs md:text-sm   '>
+          <b>Image</b>
+          <b>Product Name</b>
+          <b>Category</b>
+          <b>Price</b>
+          <b className='text-center'>Actions</b>
         </div>
+        {/* List Items */}
 
-        {products.map((product) => (
-          <div key={product.name} className='grid grid-cols-[2fr_1fr_1fr_1fr] gap-4 px-6 py-4 text-sm text-slate-700 odd:bg-white even:bg-slate-50/60'>
-            <span className='font-medium text-slate-900'>{product.name}</span>
-            <span>{product.category}</span>
-            <span>{product.price}</span>
-            <span>{product.stock}</span>
-          </div>
-        ))}
+        {
+          list.map((item, index) => (
+            <div key={index} className='grid grid-cols-[1fr_3fr_1fr_1fr_1fr] md:grid-cols-[1fr_3fr_1fr_1fr_1fr] items-center gap-2  py-1 px-2 border text-sm hover:bg-gray-50'>
+              <img src={item.image[0]} alt="" className='w-12 h-12 object-contain' />
+              <p className='line-clamp-2'>{item.name}</p>
+              <p>{item.cat}</p>
+              <p>{currency}{item.price}</p>
+              <p  onClick ={()=>removeproduct(item._id)}className='text-right md:text-center cursor-pointer text-lg'>X</p>
+
+            </div>
+          ))
+        }
       </div>
-    </section>
+    </>
   )
+
 }
 
 export default List

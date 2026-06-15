@@ -5,7 +5,7 @@ import axios from 'axios'
 import { backendUrl } from '../App'
 import { toast } from 'react-toastify'
 
-const Add = ({ token }) => {
+const Add = ({ token, setToken }) => {
 
   const [image1, setImage1] = useState(false)
   const [image2, setImage2] = useState(false)
@@ -28,15 +28,15 @@ const Add = ({ token }) => {
       image3 && formData.append('image3', image3);
       image4 && formData.append('image4', image4);
       formData.append('name', name);
-      formData.append('desc', desc);
+      formData.append('description', desc);
       formData.append('price', price);
-      formData.append('cat', cat);
-      formData.append('subCat', subCat);
-      formData.append('size', JSON.stringify(size));
+      formData.append('category', cat);
+      formData.append('subCategory', subCat);
+      formData.append('sizes', JSON.stringify(size));
       formData.append('stock', stock);
-      formData.append('isBestseller', isBestseller);
-      const response = await axios.post(backendUrl + "api/productadd", formData, { headers: { token: token } })
-      if (response.data.sucess) {
+      formData.append('bestseller', isBestseller);
+      const response = await axios.post(backendUrl + "api/product/add", formData, { headers: { token: token } })
+      if (response.data.success) {
         toast.success(response.data.message)
         setName('')
         setDesc('')
@@ -54,7 +54,14 @@ const Add = ({ token }) => {
       }
     }
     catch (error) {
-      toast.error(error.message)
+      console.log("Backend error response:", error.response?.data);
+      if (error.response?.status === 401) {
+        setToken('');
+        localStorage.removeItem('token');
+        toast.error("Session expired. Please log in again.");
+      } else {
+        toast.error(error.response?.data?.message || error.message);
+      }
     }
 
   }

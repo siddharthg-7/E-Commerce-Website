@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { toast } from 'react-toastify';
+import { ShopContext } from '../context/ShopContext';
 
 const Login = () => {
   const [currentState, setCurrentState] = useState('Login');
+  const {tokens,setokens,navigate,backendURL} = useContext(ShopContext);  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');

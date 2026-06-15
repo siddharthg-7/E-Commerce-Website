@@ -1,30 +1,33 @@
 import { createContext, useState } from "react";
-import {products} from '../assets/assets'
+import axios from 'axios'
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 const ShopContext = createContext({
     products: [],
     currency: '$',
     delivery_fee: 0,
     search: '',
-    setShowSearch: () => {},
-    setSearch: () => {},
+    setShowSearch: () => { },
+    setSearch: () => { },
     showsearch: false,
     cartItems: {},
-    addToCart: () => {},
-    removeFromCart: () => {},
+    addToCart: () => { },
+    removeFromCart: () => { },
     getCartItemsCount: () => 0,
 });
 const ShopContextProvider = ({ children }) => {
     const currency = '$';
     const delivery_fee = 10;
-    const [search,setSearch] = useState('');
-    const [showsearch,setShowSearch] = useState(false);
-    const [cartItems,setCartItems] = useState({});
+    const backendURL = import.meta.env.VITE_BACKEND_URL
+    const [products, setproducts] = useState([]);
+    const [tokens, settokens] = useState(localStorage.getItem('token'));
+    const [search, setSearch] = useState('');
+    const [showsearch, setShowSearch] = useState(false);
+    const [cartItems, setCartItems] = useState({});
     const navigate = useNavigate();
-    const addToCart = async (itemId,size) =>
-    {
-        if(!size) {
+    const addToCart = async (itemId, size) => {
+        if (!size) {
             toast.error('Please select size', {
                 position: "top-right",
                 autoClose: 3000,
@@ -32,20 +35,19 @@ const ShopContextProvider = ({ children }) => {
             return;
         }
         let cartData = structuredClone(cartItems);
-        if(cartData[itemId])
-        {            if(cartData[itemId][size])
-            {
+        if (cartData[itemId]) {
+            if (cartData[itemId][size]) {
                 cartData[itemId][size] += 1;
             }
-            else            {
+            else {
                 cartData[itemId][size] = 1;
             }
         }
         else {
             cartData[itemId] = {};
             cartData[itemId][size] = 1;
-            }
-            setCartItems(cartData);
+        }
+        setCartItems(cartData);
 
     }
 
@@ -71,47 +73,65 @@ const ShopContextProvider = ({ children }) => {
 
 
     const getCartItemsCount = () => {
-    let totalcount = 0;
+        let totalcount = 0;
 
-  for (const itemId in cartItems) {
-    const productExists = products.some(p => p._id === itemId);
+        for (const itemId in cartItems) {
+            const productExists = products.some(p => p._id === itemId);
 
-    if (!productExists) continue;
+            if (!productExists) continue;
 
-    for (const size in cartItems[itemId]) {
-      const quantity = cartItems[itemId][size];
+            for (const size in cartItems[itemId]) {
+                const quantity = cartItems[itemId][size];
 
-      if (quantity > 0) {
-        totalcount += quantity;
-      }
-    }
-  }
-
-  return totalcount;
-};
-
-const getcartAmount = () => {
-    let totalAmount = 0;
-
-    for (const itemId in cartItems) {
-        const productExists = products.some(p => p._id === itemId);
-
-        if (!productExists) continue;
-
-        const productData = products.find(p => p._id === itemId);
-
-        for (const size in cartItems[itemId]) {
-            const quantity = cartItems[itemId][size];
-
-            if (quantity > 0) {
-                totalAmount += productData.price * quantity;
+                if (quantity > 0) {
+                    totalcount += quantity;
+                }
             }
+        }
+
+        return totalcount;
+    };
+
+    const getcartAmount = () => {
+        let totalAmount = 0;
+
+        for (const itemId in cartItems) {
+            const productExists = products.some(p => p._id === itemId);
+
+            if (!productExists) continue;
+
+            const productData = products.find(p => p._id === itemId);
+
+            for (const size in cartItems[itemId]) {
+                const quantity = cartItems[itemId][size];
+
+                if (quantity > 0) {
+                    totalAmount += productData.price * quantity;
+                }
+            }
+        }
+
+        return totalAmount;
+    };
+    const getproductsdata = async () => {
+        try {
+            const response = await axios.get(backendURL + '/api/product/list');
+            if(response.data.success)
+            {
+                setproducts(response.data.products);
+            }
+            else{
+                toast.error(response.data.message, { position: "top-right", autoClose: 3000 });
+            }
+        }
+        catch (error) {
+            toast.error(error.message, { position: "top-right", autoClose: 3000 });
         }
     }
 
-    return totalAmount;
-};
-
+    useEffect(()=> {
+        getproductsdata()
+    },[])
     const value = {
         products,
         currency,
@@ -125,7 +145,8 @@ const getcartAmount = () => {
         removeFromCart,
         getCartItemsCount,
         getcartAmount,
-        navigate
+        navigate,
+        backendURL,settokens,tokens
 
     };
 

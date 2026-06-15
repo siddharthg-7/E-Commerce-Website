@@ -14,7 +14,7 @@ const Login = ({ setToken }) => {
 
             e.preventDefault();
             setError('');
-            const response = await axios.post(backendUrl+'/api/user/admin/login', {
+            const response = await axios.post(backendUrl + 'api/user/admin/login', {
                 email: email.trim(),
                 password,
             });
