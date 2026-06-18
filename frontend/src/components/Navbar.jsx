@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 const Navbar = () => {
 
   const [visible, setVisible] = useState(false);
-  const { setShowSearch, getCartItemsCount, token, navigate, setToken, setCartItems } = useContext(ShopContext);
+  const { setShowSearch, getCartItemsCount, tokens, navigate, settokens, setCartItems } = useContext(ShopContext);
   const logout = () => {
     toast.info("Logged out successfully", {
       position: "top-right",
@@ -17,7 +17,7 @@ const Navbar = () => {
     });
     navigate('/login');
     localStorage.removeItem('token');
-    setToken('');
+    settokens('');
     setCartItems({});
 
 
@@ -63,9 +63,9 @@ const Navbar = () => {
 
         <div className='group relative'>
 
-          <img onClick={() => token ? null : navigate('/login')} src={assets.profile_icon} className='w-5 cursor-pointer' alt="Profile" />
+          <img onClick={() => tokens ? null : navigate('/login')} src={assets.profile_icon} className='w-5 cursor-pointer' alt="Profile" />
           {/* Dropdown */}
-          {token && <div className='group-hover:block hidden absolute right-0 pt-4'>
+          {tokens && <div className='group-hover:block hidden absolute right-0 pt-4'>
             <div className='flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500 rounded'>
               <p className='cursor-pointer hover:text-black'>My Profile</p>
               <p onClick={()=>navigate('/orders')} className='cursor-pointer hover:text-black'>Orders</p>

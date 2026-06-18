@@ -7,7 +7,7 @@ const List = ({ token, setToken }) => {
   const [list, setList] = useState([])
   const fetchList = async () => {
     try {
-      const response = await axios.get(backendUrl + "api/product/list", { headers: { token: token } })
+      const response = await axios.get(backendUrl + "/api/product/list", { headers: { token: token } })
       if (response.data.success) {
         setList(response.data.products || [])
       }
@@ -27,7 +27,7 @@ const List = ({ token, setToken }) => {
 
   const removeproduct = async (id) => {
     try {
-      const response = await axios.post(backendUrl + "api/product/remove", { id }, { headers: { token: token } })
+      const response = await axios.post(backendUrl + "/api/product/remove", { id }, { headers: { token: token } })
       if (response.data.success) {
         toast.success(response.data.message)
         await fetchList()
@@ -46,6 +46,8 @@ const List = ({ token, setToken }) => {
       }
     }
   }
+
+
   useEffect(() => {
     fetchList()
   }, [])
@@ -70,7 +72,7 @@ const List = ({ token, setToken }) => {
               <p className='line-clamp-2'>{item.name}</p>
               <p>{item.cat}</p>
               <p>{currency}{item.price}</p>
-              <p  onClick ={()=>removeproduct(item._id)}className='text-right md:text-center cursor-pointer text-lg'>X</p>
+              <p onClick={() => removeproduct(item._id)} className='text-right md:text-center cursor-pointer text-lg'>X</p>
 
             </div>
           ))

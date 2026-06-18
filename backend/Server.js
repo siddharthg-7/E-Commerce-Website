@@ -7,6 +7,8 @@ import connectDB from './config/mongodb.js';
 import connectCloudinary from './config/cloudinary.js';
 import userRouter from './routes/userRouter.js';
 import productRouter from './routes/productRoute.js';
+import cartrouter from './routes/cartRoute.js';
+import orderRouter from './routes/orderroute.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,11 +26,12 @@ app.use(cors());
 
 app.use('/api/user', userRouter);
 app.use('/api/product', productRouter);
+app.use('/api/cart', cartrouter)
+app.use('/api/order', orderRouter)
 app.get('/', (req, res) => {
   res.send('API is running');
 });
 
-// Start the API immediately so auth-only routes keep working even if the DB is down.
 const startServer = async () => {
   app.listen(port, () => {
     console.log(`Server is running on port ${port}`);

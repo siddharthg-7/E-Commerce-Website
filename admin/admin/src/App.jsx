@@ -10,7 +10,7 @@ import { useEffect } from 'react'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
-export const backendUrl = import.meta.env.VITE_BACKEND_URL
+export const backendUrl = import.meta.env.VITE_BACKEND_URL ? import.meta.env.VITE_BACKEND_URL.replace(/\/$/, '') : "http://localhost:4000";
 export const currency = '$'
 const App = () => {
   const [token, setToken] = React.useState(localStorage.getItem('token') || null)

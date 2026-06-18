@@ -35,7 +35,7 @@ const Add = ({ token, setToken }) => {
       formData.append('sizes', JSON.stringify(size));
       formData.append('stock', stock);
       formData.append('bestseller', isBestseller);
-      const response = await axios.post(backendUrl + "api/product/add", formData, { headers: { token: token } })
+      const response = await axios.post(backendUrl + "/api/product/add", formData, { headers: { token: token } })
       if (response.data.success) {
         toast.success(response.data.message)
         setName('')

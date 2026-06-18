@@ -14,6 +14,7 @@ const ShopContext = createContext({
     cartItems: {},
     addToCart: () => { },
     removeFromCart: () => { },
+    updateQuantity: async () => { },
     getCartItemsCount: () => 0,
 });
 const ShopContextProvider = ({ children }) => {
@@ -48,6 +49,50 @@ const ShopContextProvider = ({ children }) => {
             cartData[itemId][size] = 1;
         }
         setCartItems(cartData);
+        if (tokens) {
+            try {
+                const response = await axios.post(backendURL + "/api/cart/add", { itemid: itemId, size: size }, {
+                    headers: {
+                        Authorization: tokens
+                    }
+                })
+                if (response.data.success) {
+                    toast.success(response.data.message, { position: "top-right", autoClose: 3000 })
+                }
+            }
+            catch (error) {
+                toast.error(error.response?.data?.message || error.message, { position: "top-right", autoClose: 3000 })
+                if (error.response && error.response.status === 401) {
+                    settokens('');
+                    localStorage.removeItem('token');
+                }
+            }
+        }
+
+    }
+    const updateQuantity = async (itemId, size, quantity) => {
+        let cartdata = structuredClone(cartItems)
+        cartdata[itemId][size] = quantity
+        setCartItems(cartdata)
+        if (tokens) {
+            try {
+                const response = await axios.post(backendURL + "/api/cart/update", { itemid: itemId, size: size, quantity: quantity }, {
+                    headers: {
+                        Authorization: tokens
+                    }
+                })
+                if (response.data.success) {
+                    toast.success(response.data.message, { position: "top-right", autoClose: 3000 })
+                }
+            }
+            catch (error) {
+                toast.error(error.response?.data?.message || error.message, { position: "top-right", autoClose: 3000 })
+                if (error.response && error.response.status === 401) {
+                    settokens('');
+                    localStorage.removeItem('token');
+                }
+            }
+        }
 
     }
 
@@ -116,11 +161,10 @@ const ShopContextProvider = ({ children }) => {
     const getproductsdata = async () => {
         try {
             const response = await axios.get(backendURL + '/api/product/list');
-            if(response.data.success)
-            {
+            if (response.data.success) {
                 setproducts(response.data.products);
             }
-            else{
+            else {
                 toast.error(response.data.message, { position: "top-right", autoClose: 3000 });
             }
         }
@@ -128,10 +172,31 @@ const ShopContextProvider = ({ children }) => {
             toast.error(error.message, { position: "top-right", autoClose: 3000 });
         }
     }
-
-    useEffect(()=> {
+    const getusercart = async (token) => {
+        try {
+            const response = await axios.post(backendURL + "/api/cart/get", {}, {
+                headers: {
+                    Authorization: token
+                }
+            })
+            if (response.data.success) {
+                setCartItems(response.data.cartData)
+            }
+        }
+        catch (error) {
+            toast.error(error.response?.data?.message || error.message, { position: "top-right", autoClose: 3000 });
+            if (error.response && error.response.status === 401) {
+                settokens('');
+                localStorage.removeItem('token');
+            }
+        }
+    }
+    useEffect(() => {
         getproductsdata()
-    },[])
+        if (tokens) {
+            getusercart(tokens)
+        }
+    }, [tokens])
     const value = {
         products,
         currency,
@@ -146,7 +211,8 @@ const ShopContextProvider = ({ children }) => {
         getCartItemsCount,
         getcartAmount,
         navigate,
-        backendURL,settokens,tokens
+        backendURL, settokens, tokens,
+        setCartItems
 
     };
 
