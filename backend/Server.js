@@ -28,8 +28,12 @@ app.use('/api/user', userRouter);
 app.use('/api/product', productRouter);
 app.use('/api/cart', cartrouter)
 app.use('/api/order', orderRouter)
+import mongoose from 'mongoose';
+
 app.get('/', (req, res) => {
-  res.send('API is running');
+  const dbStatus = mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected';
+  const hasUri = !!process.env.MONGODB_URI;
+  res.send(`API is running. Database: ${dbStatus}. MONGODB_URI set: ${hasUri}`);
 });
 
 const startServer = async () => {
