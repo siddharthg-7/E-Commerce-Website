@@ -8,7 +8,10 @@ const connectDB = async () => {
   }
 
   try {
-    const db = await mongoose.connect(`${process.env.MONGODB_URI}/ecommerce`);
+    const db = await mongoose.connect(process.env.MONGODB_URI, {
+      dbName: 'ecommerce',
+      serverSelectionTimeoutMS: 5000,
+    });
     isConnected = db.connections[0].readyState;
     console.log('MongoDB connected successfully');
   } catch (error) {
