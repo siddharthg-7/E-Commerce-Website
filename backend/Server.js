@@ -30,10 +30,12 @@ app.use('/api/cart', cartrouter)
 app.use('/api/order', orderRouter)
 import mongoose from 'mongoose';
 
+let dbError = null;
+
 app.get('/', (req, res) => {
   const dbStatus = mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected';
   const hasUri = !!process.env.MONGODB_URI;
-  res.send(`API is running. Database: ${dbStatus}. MONGODB_URI set: ${hasUri}`);
+  res.send(`API is running. Database: ${dbStatus}. MONGODB_URI set: ${hasUri}. Error: ${dbError ? dbError.message : 'None'}`);
 });
 
 const startServer = async () => {
@@ -49,6 +51,7 @@ const startServer = async () => {
   try {
     await connectDB();
   } catch (error) {
+    dbError = error;
     console.error('MongoDB connection failed:', error);
     console.warn(`API is still running on port ${port}, but DB-backed routes will fail until MongoDB is reachable.`);
   }
