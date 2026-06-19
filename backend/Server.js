@@ -49,5 +49,6 @@ const startServer = async () => {
     console.warn(`API is still running on port ${port}, but DB-backed routes will fail until MongoDB is reachable.`);
   }
 };
-
 startServer();
+
+export default app;
