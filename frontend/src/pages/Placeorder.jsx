@@ -28,6 +28,34 @@ const PlaceOrder = () => {
     })
   }, [formdata]);
 
+  const initpay = (order) => {
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+      amount: order.amount,
+      currency: order.currency,
+      name: 'Order Payment',
+      description: 'Order Payment',
+      order_id: order.id,
+      receipt: order.receipt,
+      handler: async (response) => {
+        try {
+          const { data } = await axios.post(backendURL + '/api/order/verifyrazorpay', Object.assign({}, response, { userId: tokens }), { headers: { Authorization: tokens } });
+          if (data.success) {
+            setCartItems({});
+            navigate('/orders');
+          } else {
+            toast.error(data.message);
+          }
+        } catch (error) {
+          console.log(error);
+          toast.error(error.response?.data?.message || error.message);
+        }
+      }
+    };
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  };
+
   const onsubmithandler = async (event) => {
     event.preventDefault();
     try {
@@ -62,8 +90,25 @@ const PlaceOrder = () => {
           toast.error(response.data.message);
         }
         break;
-      default:
-        break;
+        case 'stripe':
+          const session = await axios.post(backendURL + '/api/order/Stripe', orderData, { headers: { Authorization: tokens } });
+          if (session.data.success) {
+            const {session_url} = session.data;
+            window.location.replace(session_url);
+          } else {
+            toast.error(session.data.message);
+          }
+          break;
+        case 'razorpay':
+          const responseRazorpay = await axios.post(backendURL + '/api/order/Razorpay', orderData, { headers: { Authorization: tokens } });
+          if (responseRazorpay.data.success) {
+            initpay(responseRazorpay.data.order);
+          } else {
+            toast.error(responseRazorpay.data.message);
+          }
+          break;
+        default:
+          break;
     }
     } catch (error) {
       console.log(error);

@@ -96,7 +96,7 @@ const ShopContextProvider = ({ children }) => {
 
     }
 
-    const removeFromCart = (itemId, size, quantityToRemove = 1) => {
+    const removeFromCart = async (itemId, size, quantityToRemove = 1) => {
         const cartData = structuredClone(cartItems);
 
         if (!cartData[itemId] || !cartData[itemId][size]) {
@@ -104,6 +104,8 @@ const ShopContextProvider = ({ children }) => {
         }
 
         cartData[itemId][size] -= quantityToRemove;
+
+        const newQuantity = cartData[itemId][size];
 
         if (cartData[itemId][size] <= 0) {
             delete cartData[itemId][size];
@@ -114,8 +116,23 @@ const ShopContextProvider = ({ children }) => {
         }
 
         setCartItems(cartData);
+        
+        if (tokens) {
+            try {
+                const response = await axios.post(backendURL + "/api/cart/update", { itemid: itemId, size: size, quantity: Math.max(0, newQuantity) }, {
+                    headers: {
+                        Authorization: tokens
+                    }
+                })
+                if (response.data.success) {
+                    toast.success("Item removed", { position: "top-right", autoClose: 3000 })
+                }
+            }
+            catch (error) {
+                toast.error(error.response?.data?.message || error.message, { position: "top-right", autoClose: 3000 })
+            }
+        }
     };
-
 
     const getCartItemsCount = () => {
         let totalcount = 0;

@@ -15,7 +15,7 @@ const Orders = ({ token, setToken }) => {
     try {
       const response = await axios.get(`${backendUrl}/api/order/list`, { headers: { token } })
       if (response.data.success) {
-        setorderdata(response.data.orders);
+        setorderdata(response.data.orders.reverse());
       }
       else {
         toast.error(response.data.message);
@@ -121,7 +121,7 @@ const Orders = ({ token, setToken }) => {
 
               {/* Status Section */}
               <div className="w-full md:w-56 lg:w-64 flex flex-col gap-3">
-                <select onChange={(event)=>statushandler(event,order._id)}
+                <select onChange={(event) => statushandler(event, order._id)}
                   className="border rounded px-3 py-2 text-sm w-full" value={order.status}
                 >
                   <option value="Order Placed">Order Placed</option>
@@ -141,7 +141,7 @@ const Orders = ({ token, setToken }) => {
 
                   <p>
                     <span className="font-medium">Method:</span>{" "}
-                    {order.paymentMethod}
+                    {order.paymentmethod}
                   </p>
 
                   <p>
@@ -151,7 +151,7 @@ const Orders = ({ token, setToken }) => {
 
                   <p>
                     <span className="font-medium">Date:</span>{" "}
-                    {new Date(order.createdAt).toLocaleDateString()}
+                    {new Date(order.date).toLocaleDateString()}
                   </p>
                 </div>
               </div>

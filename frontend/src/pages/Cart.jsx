@@ -80,6 +80,7 @@ const Cart = () => {
             </div>
 
             <input
+              onChange={(e) => e.target.value === '' || e.target.value === '0' ? null : updateQuantity(item._id, item.size, Number(e.target.value))}
               className='no-spinner border w-14 sm:w-20 px-2 py-1 text-center justify-self-center'
               type='number'
               min={1}
