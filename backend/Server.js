@@ -23,19 +23,50 @@ connectCloudinary();
 app.use(express.json());
 app.use(cors());
 
+// Ensure database is connected for API routes
+app.use('/api', async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    console.error('Database connection error:', error);
+    res.status(500).json({ success: false, message: 'Database connection failed' });
+  }
+});
 
 app.use('/api/user', userRouter);
 app.use('/api/product', productRouter);
-app.use('/api/cart', cartrouter)
-app.use('/api/order', orderRouter)
+app.use('/api/cart', cartrouter);
+app.use('/api/order', orderRouter);
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+  console.error('Global error handler:', err.stack);
+  res.status(500).json({
+    success: false,
+    message: err.message || 'Internal Server Error'
+  });
+});
 import mongoose from 'mongoose';
 
 let dbError = null;
 
+app.get('/health', async (req, res) => {
+  try {
+    await connectDB();
+  } catch (err) {
+    // ignore error here, just report state
+  }
+  
+  res.json({
+    mongoState: mongoose.connection.readyState,
+    hasUri: !!process.env.MONGODB_URI,
+    error: dbError ? dbError.message : 'None'
+  });
+});
+
 app.get('/', (req, res) => {
-  const dbStatus = mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected';
-  const hasUri = !!process.env.MONGODB_URI;
-  res.send(`API is running. Database: ${dbStatus}. MONGODB_URI set: ${hasUri}. Error: ${dbError ? dbError.message : 'None'}`);
+  res.send('API is running.');
 });
 
 const startServer = async () => {
