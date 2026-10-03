@@ -197,12 +197,12 @@ const ShopContextProvider = ({ children }) => {
                 }
             })
             if (response.data.success) {
-                setCartItems(response.data.cartData)
+                setCartItems(response.data.cartData || {})
             }
         }
         catch (error) {
             toast.error(error.response?.data?.message || error.message, { position: "top-right", autoClose: 3000 });
-            if (error.response && error.response.status === 401) {
+            if (error.response && (error.response.status === 401 || error.response.status === 404)) {
                 settokens('');
                 localStorage.removeItem('token');
             }
