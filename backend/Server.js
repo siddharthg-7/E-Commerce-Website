@@ -52,16 +52,22 @@ import mongoose from 'mongoose';
 let dbError = null;
 
 app.get('/health', async (req, res) => {
+  let currentError = null;
   try {
     await connectDB();
   } catch (err) {
-    // ignore error here, just report state
+    currentError = err.message;
   }
+  
+  const rawUri = process.env.MONGODB_URI || '';
+  const maskedUri = rawUri ? rawUri.replace(/:([^@]+)@/, ':***@') : 'None';
   
   res.json({
     mongoState: mongoose.connection.readyState,
     hasUri: !!process.env.MONGODB_URI,
-    error: dbError ? dbError.message : 'None'
+    uriLength: rawUri.length,
+    maskedUri,
+    error: currentError || (dbError ? dbError.message : 'None')
   });
 });
 
