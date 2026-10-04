@@ -1,7 +1,7 @@
 import userModel from "../models/userModel.js"
 
 
-//add products to user cart 
+
 const addTocart = async (req, res) => {
     try {
         const { userId, itemid, size } = req.body
