@@ -65,6 +65,7 @@ app.get('/health', async (req, res) => {
   res.json({
     mongoState: mongoose.connection.readyState,
     hasUri: !!process.env.MONGODB_URI,
+    cloudinaryConfigured: !!(process.env.CLOUDINARY_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_SECRET_KEY),
     uriLength: rawUri.length,
     maskedUri,
     error: mongoose.connection.readyState === 1 ? 'None' : (currentError || (dbError ? dbError.message : 'None'))
