@@ -65,6 +65,8 @@ app.get('/health', async (req, res) => {
   });
 });
 
+app.get('/favicon.ico', (req, res) => res.status(204).end());
+
 app.get('/', (req, res) => {
   res.send('API is running.');
 });
