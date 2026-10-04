@@ -59,7 +59,7 @@ app.get('/health', async (req, res) => {
     currentError = err.message;
   }
   
-  const rawUri = process.env.MONGODB_URI || '';
+  const rawUri = (process.env.MONGODB_URI || '').trim();
   const maskedUri = rawUri ? rawUri.replace(/:([^@]+)@/, ':***@') : 'None';
   
   res.json({
@@ -67,7 +67,7 @@ app.get('/health', async (req, res) => {
     hasUri: !!process.env.MONGODB_URI,
     uriLength: rawUri.length,
     maskedUri,
-    error: currentError || (dbError ? dbError.message : 'None')
+    error: mongoose.connection.readyState === 1 ? 'None' : (currentError || (dbError ? dbError.message : 'None'))
   });
 });
 

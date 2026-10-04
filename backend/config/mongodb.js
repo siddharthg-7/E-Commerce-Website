@@ -6,7 +6,8 @@ const connectDB = async () => {
   }
 
   try {
-    await mongoose.connect(process.env.MONGODB_URI, {
+    const uri = (process.env.MONGODB_URI || '').trim();
+    await mongoose.connect(uri, {
       dbName: 'ecommerce',
       serverSelectionTimeoutMS: 5000,
     });
